@@ -19,7 +19,7 @@ public class Ledger {
     @Column(name = "account")
     private Long account;
     @Column(name = "classification")
-    private Boolean classification;
+    private String classification;
     @Column(name = "deposit")
     private Long deposit;
     @Column(name = "withdrawal")
