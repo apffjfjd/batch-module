@@ -1,7 +1,9 @@
 package kdkim.module.spring_batch.config;
 
 import kdkim.module.spring_batch.entity.Batch;
+import kdkim.module.spring_batch.entity.Daily;
 import kdkim.module.spring_batch.entity.Ledger;
+import kdkim.module.spring_batch.entity.composite_key.DailyCompositeKey;
 import kdkim.module.spring_batch.reader.CopyLedgerReader;
 import kdkim.module.spring_batch.reader.TotalDailyReader;
 import kdkim.module.spring_batch.repository.BatchRepository;
@@ -37,12 +39,12 @@ public class BatchJobConfiguration extends DefaultBatchConfiguration {
                 .build();
     }
 
-//    @Bean
-//    public Job totalDailyJob(JobRepository jr, Step totalDailyStep){
-//        return new JobBuilder("totalDailyJob", jr)
-//                .start(totalDailyStep)
-//                .build();
-//    }
+    @Bean
+    public Job totalDailyJob(JobRepository jr, Step totalDailyStep){
+        return new JobBuilder("totalDailyJob", jr)
+                .start(totalDailyStep)
+                .build();
+    }
 
     @Bean
     public Step copyLedgerStep(
@@ -60,10 +62,15 @@ public class BatchJobConfiguration extends DefaultBatchConfiguration {
                 .build();
     }
 
-//    @Bean
-//    public Step totalDailyStep(){
-//        return null;
-//    }
+    @Bean
+    public Step totalDailyStep(JobRepository jobRepository,
+                               PlatformTransactionManager ptm,
+                               RepositoryItemReader<Ledger> BatchReader,
+                               ItemProcessor<Batch, Daily> itemProcessor,
+                               RepositoryItemWriter<Daily> dailyWriter
+    ){
+        return null;
+    }
 
     @Bean
     public RepositoryItemReader<Ledger> ledgerReader(LedgerRepository ledgerRepository) {
@@ -75,15 +82,35 @@ public class BatchJobConfiguration extends DefaultBatchConfiguration {
     }
 
     @Bean
-    public ItemProcessor<Ledger, Batch> ledgerToBatchProcessor() {
-        return ledger -> Batch.builder()
-                .ledgerId(ledger.getId())
-                .account(ledger.getAccount())
-                .classification(ledger.getClassification())
-                .deposit(ledger.getDeposit())
-                .withdrawal(ledger.getWithdrawal())
-                .balance(ledger.getBalance())
-                .transactionTime(ledger.getTransactionTime())
+    public RepositoryItemReader<Batch> batchReader(BatchRepository batchRepository) {
+        RepositoryItemReader<Batch> reader = new RepositoryItemReader<>();
+        reader.setRepository(batchRepository);
+        reader.setMethodName("findAll");
+        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
+        return reader;
+    }
+
+//    @Bean
+//    public JdbcCursorItemReader<Batch> batchReader(DataSource dataSource) {
+//        JdbcCursorItemReader<Batch> reader = new JdbcCursorItemReader<>();
+//        reader.setDataSource(dataSource);
+//        reader.setSql("SELECT account, transaction_date, deposit, withdrawal FROM Batch");
+//        reader.setRowMapper((rs, rowNum) -> {
+//            Batch batch = new Batch();
+//            batch.setAccount(rs.getString("account"));
+//            batch.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
+//            batch.setDeposit(rs.getDouble("deposit"));
+//            batch.setWithdrawal(rs.getDouble("withdrawal"));
+//            return batch;
+//        });
+//        return reader;
+//    }
+
+    @Bean
+    public ItemProcessor<Batch, Daily> batchToDailyProcessor() {
+        DailyCompositeKey dck = new DailyCompositeKey();
+        return batch -> Daily.builder()
+                .id(dck())
                 .build();
     }
 
