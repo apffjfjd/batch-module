@@ -65,60 +65,26 @@ public class BatchJobConfiguration extends DefaultBatchConfiguration {
     @Bean
     public Step totalDailyStep(JobRepository jobRepository,
                                PlatformTransactionManager ptm,
-                               RepositoryItemReader<Ledger> BatchReader,
+                               RepositoryItemReader<Batch> batchReader,
                                ItemProcessor<Batch, Daily> itemProcessor,
                                RepositoryItemWriter<Daily> dailyWriter
     ){
-        return null;
+        return new StepBuilder("totalDailyStep", jobRepository)
+                .<Batch, Daily>chunk(10,ptm)
+                .reader(batchReader)
+                .processor(itemProcessor)
+                .writer(dailyWriter)
+                .build();
     }
 
-    @Bean
-    public RepositoryItemReader<Ledger> ledgerReader(LedgerRepository ledgerRepository) {
-        RepositoryItemReader<Ledger> reader = new RepositoryItemReader<>();
-        reader.setRepository(ledgerRepository);
-        reader.setMethodName("findAll");
-        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
-        return reader;
-    }
-
-    @Bean
-    public RepositoryItemReader<Batch> batchReader(BatchRepository batchRepository) {
-        RepositoryItemReader<Batch> reader = new RepositoryItemReader<>();
-        reader.setRepository(batchRepository);
-        reader.setMethodName("findAll");
-        reader.setSort(Collections.singletonMap("id", Sort.Direction.ASC));
-        return reader;
-    }
-
-//    @Bean
-//    public JdbcCursorItemReader<Batch> batchReader(DataSource dataSource) {
-//        JdbcCursorItemReader<Batch> reader = new JdbcCursorItemReader<>();
-//        reader.setDataSource(dataSource);
-//        reader.setSql("SELECT account, transaction_date, deposit, withdrawal FROM Batch");
-//        reader.setRowMapper((rs, rowNum) -> {
-//            Batch batch = new Batch();
-//            batch.setAccount(rs.getString("account"));
-//            batch.setTransactionDate(rs.getDate("transaction_date").toLocalDate());
-//            batch.setDeposit(rs.getDouble("deposit"));
-//            batch.setWithdrawal(rs.getDouble("withdrawal"));
-//            return batch;
-//        });
-//        return reader;
-//    }
 
     @Bean
     public ItemProcessor<Batch, Daily> batchToDailyProcessor() {
         DailyCompositeKey dck = new DailyCompositeKey();
         return batch -> Daily.builder()
-                .id(dck())
+                .id()
                 .build();
     }
 
-    @Bean
-    public RepositoryItemWriter<Batch> batchWriter(BatchRepository batchRepository) {
-        RepositoryItemWriter<Batch> writer = new RepositoryItemWriter<>();
-        writer.setRepository(batchRepository);
-        writer.setMethodName("save");
-        return writer;
-    }
+
 }

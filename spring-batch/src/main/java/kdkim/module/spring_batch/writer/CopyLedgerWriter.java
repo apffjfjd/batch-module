@@ -5,16 +5,18 @@ import kdkim.module.spring_batch.repository.BatchRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.RepositoryItemWriter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
-public class CopyLedgerWriter implements ItemWriter<Batch> {
+public class CopyLedgerWriter{
 
-    private BatchRepository batchRepository;
-    @Override
-    public void write(Chunk<? extends Batch> chunk){
-        batchRepository.saveAll(chunk.getItems());
-        System.out.println(batchRepository.findAll());
+    @Bean
+    public RepositoryItemWriter<Batch> batchWriter(BatchRepository batchRepository) {
+        RepositoryItemWriter<Batch> writer = new RepositoryItemWriter<>();
+        writer.setRepository(batchRepository);
+        writer.setMethodName("save");
+        return writer;
     }
 }
