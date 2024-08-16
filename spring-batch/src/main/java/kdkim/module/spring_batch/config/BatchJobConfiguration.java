@@ -77,10 +77,23 @@ public class BatchJobConfiguration extends DefaultBatchConfiguration {
                 .build();
     }
 
+//    CompositeKey compositeKey = new CompositeKey.Builder()
+//            .account("123456789")
+//            .transactionDate(LocalDate.of(2023, 8, 14))
+//            .build();
+//
+//    // Transaction 엔티티를 빌더 패턴으로 생성
+//    Transaction transaction = new Transaction.Builder()
+//            .id(compositeKey)
+//            .amount(1000.0)
+//            .build();
 
     @Bean
     public ItemProcessor<Batch, Daily> batchToDailyProcessor() {
-        DailyCompositeKey dck = new DailyCompositeKey();
+        batch -> DailyCompositeKey.builder()
+                .account()
+        DailyCompositeKey dck = DailyCompositeKey.builder()
+                .account(batch.ac);
         return batch -> Daily.builder()
                 .id()
                 .build();
