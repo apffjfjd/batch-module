@@ -12,6 +12,8 @@ import java.util.Date;
 @Embeddable
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class DailyCompositeKey implements Serializable {
     private Long account;
     private Date date;

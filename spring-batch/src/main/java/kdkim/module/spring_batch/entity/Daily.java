@@ -22,9 +22,9 @@ public class Daily {
     private DailyCompositeKey id;
 
     @Column(name = "deposit_per_day")
-    private Long deposit;
+    private Long depositPerDay;
     @Column(name = "withdrawal_per_day")
-    private Long withdrawal;
+    private Long withdrawalPerDay;
 
 
 }
