@@ -1,5 +1,8 @@
 package kdkim.module.spring_batch.controller;
 
+import kdkim.module.spring_batch.repository.BatchRepository;
+import kdkim.module.spring_batch.repository.DailyRepository;
+import kdkim.module.spring_batch.repository.LedgerRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.batch.core.Job;
@@ -19,6 +22,8 @@ import java.util.Optional;
 public class JobController {
     private final JobLauncher jobLauncher;
     private final Map<String, Job> jobs;
+    private final BatchRepository batchRepository;
+    private final DailyRepository dailyRepository;
 
     @GetMapping("/api/job/launch/{jobName}")
     public void launchJob(@PathVariable String jobName) throws Exception{
@@ -33,5 +38,13 @@ public class JobController {
         System.out.println(jobParameters);
         System.out.println("------------------------------------------------------");
         jobLauncher.run(job, jobParameters);
+
+
+        if (jobName.toString() == "copyLedgerJob") {
+            batchRepository.findAll().forEach(System.out::println);
+        } else {
+            dailyRepository.findAll().forEach(System.out::println);
+        }
     }
+
 }

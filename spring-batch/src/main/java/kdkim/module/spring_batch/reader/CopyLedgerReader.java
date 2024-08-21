@@ -1,19 +1,13 @@
 package kdkim.module.spring_batch.reader;
 
-import kdkim.module.spring_batch.entity.Batch;
 import kdkim.module.spring_batch.entity.Ledger;
-import kdkim.module.spring_batch.repository.BatchRepository;
 import kdkim.module.spring_batch.repository.LedgerRepository;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.data.RepositoryItemReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 @Component
 public class CopyLedgerReader {

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Embeddable
@@ -16,5 +17,5 @@ import java.util.Date;
 @NoArgsConstructor
 public class DailyCompositeKey implements Serializable {
     private Long account;
-    private Date date;
+    private LocalDate date;
 }
