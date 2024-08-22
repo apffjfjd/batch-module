@@ -18,4 +18,12 @@ import java.util.Date;
 public class DailyCompositeKey implements Serializable {
     private Long account;
     private LocalDate date;
+
+    @Override
+    public String toString() {
+        return "DailyCompositeKey{" +
+                "account=" + account +
+                ", date=" + date +
+                '}';
+    }
 }

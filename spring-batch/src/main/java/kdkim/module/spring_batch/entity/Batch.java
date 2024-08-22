@@ -33,4 +33,18 @@ public class Batch {
     private Long balance;
     @Column(name = "transaction_time")
     private LocalDateTime transactionTime;
+
+    @Override
+    public String toString() {
+        return "Batch{" +
+                "batchId=" + batchId +
+                ", ledgerId=" + ledgerId +
+                ", account=" + account +
+                ", classification='" + classification + '\'' +
+                ", deposit=" + deposit +
+                ", withdrawal=" + withdrawal +
+                ", balance=" + balance +
+                ", transactionTime=" + transactionTime +
+                '}';
+    }
 }

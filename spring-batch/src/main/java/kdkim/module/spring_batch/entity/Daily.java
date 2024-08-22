@@ -26,5 +26,14 @@ public class Daily {
     @Column(name = "withdrawal_per_day")
     private Long withdrawalPerDay;
 
+    @Override
+    public String toString() {
+        return "Daily{" +
+                "id=" + id +
+                ", depositPerDay=" + depositPerDay +
+                ", withdrawalPerDay=" + withdrawalPerDay +
+                '}';
+    }
+
 
 }
